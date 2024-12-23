@@ -86,11 +86,18 @@ namespace Model.Anonymization
             return type.IsValueType ? Activator.CreateInstance(type) : null;
         }
 
+        // protected virtual Dictionary<Type, Actor> TypeMap => new Dictionary<Type, Actor>
+        // {
+        //     { typeof(string), Fuzzer.String },
+        //     { typeof(DateTime), Fuzzer.DateTime },
+        //     { typeof(DateTime?), Fuzzer.NullableDateTime },
+        // };
+
         protected virtual Dictionary<Type, Actor> TypeMap => new Dictionary<Type, Actor>
         {
             { typeof(string), Fuzzer.String },
-            { typeof(DateTime), Fuzzer.DateTime },
-            { typeof(DateTime?), Fuzzer.NullableDateTime },
+            { typeof(System.DateTime), Fuzzer.DateTimeActor },
+            { typeof(System.DateTime?), Fuzzer.NullableDateTimeActor },
         };
     }
 
@@ -128,40 +135,106 @@ namespace Model.Anonymization
         }
     }
 
+    // static class Fuzzer
+    // {
+    //     public static readonly Actor String = (record, prop, salt, pepper, parameters) =>
+    //     {
+    //         var p = pepper.ToString();
+    //         var s = salt.ToString();
+    //         var value = (string)prop.GetValue(record);
+
+    //         var composite = p + s + value;
+
+    //         prop.SetValue(record, composite.GetConsistentHashCode().ToString());
+    //     };
+
+    //     public static readonly Actor DateTime = (record, prop, salt, pepper, parameters) =>
+    //     {
+    //         var rand = new Random(salt.GetHashCode());
+    //         var value = (DateTime)prop.GetValue(record);
+    //         var shift = rand.Next(parameters.LowerBound, parameters.UpperBound);
+
+    //         prop.SetValue(record, parameters.DateShifter(value, shift));
+    //     };
+
+    //     public static readonly Actor NullableDateTime = (record, prop, salt, pepper, parameters) =>
+    //     {
+    //         var rand = new Random(salt.GetHashCode());
+    //         var value = (DateTime?)prop.GetValue(record);
+
+    //         if (value.HasValue)
+    //         {
+    //             var shift = rand.Next(parameters.LowerBound, parameters.UpperBound);
+    //             prop.SetValue(record, parameters.DateShifter(value.Value, shift));
+    //         }
+    //     };
+    // }
+
     static class Fuzzer
+{
+    public static readonly Actor String = (record, prop, salt, pepper, parameters) =>
     {
-        public static readonly Actor String = (record, prop, salt, pepper, parameters) =>
+        var p = pepper.ToString();
+        var s = salt.ToString();
+        var value = (string)prop.GetValue(record);
+
+        var composite = p + s + value;
+
+        prop.SetValue(record, composite.GetConsistentHashCode().ToString());
+    };
+
+    public static readonly Actor DateTimeActor = (record, prop, salt, pepper, parameters) =>
+    {
+        var rand = new Random(salt.GetHashCode());
+        var value = (System.DateTime)prop.GetValue(record);
+        var shift = rand.Next(parameters.LowerBound, parameters.UpperBound);
+
+        // Clamp shift if needed
+        if (shift > 0 && value > System.DateTime.MaxValue.AddDays(-shift))
         {
-            var p = pepper.ToString();
-            var s = salt.ToString();
-            var value = (string)prop.GetValue(record);
-
-            var composite = p + s + value;
-
-            prop.SetValue(record, composite.GetConsistentHashCode().ToString());
-        };
-
-        public static readonly Actor DateTime = (record, prop, salt, pepper, parameters) =>
+            shift = (int)(System.DateTime.MaxValue - value).TotalDays;
+        }
+        else if (shift < 0 && value < System.DateTime.MinValue.AddDays(-shift))
         {
-            var rand = new Random(salt.GetHashCode());
-            var value = (DateTime)prop.GetValue(record);
+            shift = -(int)(value - System.DateTime.MinValue).TotalDays;
+        }
+
+        System.DateTime shiftedDate;
+        try
+        {
+            shiftedDate = parameters.DateShifter(value, shift);
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            shiftedDate = (shift < 0) ? System.DateTime.MinValue : System.DateTime.MaxValue;
+        }
+
+        prop.SetValue(record, shiftedDate);
+    };
+
+    public static readonly Actor NullableDateTimeActor = (record, prop, salt, pepper, parameters) =>
+    {
+        var rand = new Random(salt.GetHashCode());
+        var value = (System.DateTime?)prop.GetValue(record);
+
+        if (value.HasValue)
+        {
             var shift = rand.Next(parameters.LowerBound, parameters.UpperBound);
-
-            prop.SetValue(record, parameters.DateShifter(value, shift));
-        };
-
-        public static readonly Actor NullableDateTime = (record, prop, salt, pepper, parameters) =>
-        {
-            var rand = new Random(salt.GetHashCode());
-            var value = (DateTime?)prop.GetValue(record);
-
-            if (value.HasValue)
+            System.DateTime shiftedDate;
+            try
             {
-                var shift = rand.Next(parameters.LowerBound, parameters.UpperBound);
-                prop.SetValue(record, parameters.DateShifter(value.Value, shift));
+                shiftedDate = parameters.DateShifter(value.Value, shift);
             }
-        };
-    }
+            catch (ArgumentOutOfRangeException)
+            {
+                shiftedDate = (shift < 0) ? System.DateTime.MinValue : System.DateTime.MaxValue;
+            }
+
+            prop.SetValue(record, shiftedDate);
+        }
+    };
+}
+
 
     class AnonymizationPlanner : IDisposable
     {
