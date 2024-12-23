@@ -1,18 +1,13 @@
 # Set configurable stuff
-DB_SERVER_prod=leaf-prod-db.cz4u6ogcouw8.us-east-1.rds.amazonaws.com
+DB_SERVER_prod=${DB_SERVER}
 DB_USER_prod=dbadmin
-DB_PASSWORD_prod=Yo7HmnsI00taJI5L
-
-# documentaion correct - write comments, explanation, path change also mention
-# make new DBs -(ask sajjan)
-
+DB_PASSWORD_prod=${DB_PASSWORD}
 
 LEAF_ROOT=$PWD
-KEYS_PATH="/home/ubuntu/leaf/keys"  # Set the absolute path to keys
+KEYS_PATH=${KEYS_PATH}  # Set the absolute path to keys
 
 # SQL_SERVER_CONNECTION="Server=host.docker.internal,1433;Database=LeafDB;uid=sa;Password=$SA_PASSWORD;TrustServerCertificate=True"
 SQL_SERVER_CONNECTION_prod="Server=$DB_SERVER_prod;Database=LeafDB;uid=$DB_USER_prod;Password=$DB_PASSWORD_prod;TrustServerCertificate=True"
-# SQL_SERVER_CONNECTION_prod=leaf-prod-db.cz4u6ogcouw8.us-east-1.rds.amazonaws.com;Database=LeafDB;uid=dbadmin;Password=$DB_PASSWORD_prod;TrustServerCertificate=True
 
 # Check ENV variables
 if [ -z ${LEAF_JWT_CERT+x}   ]; then echo "LEAF_JWT_CERT is unset" && exit; fi
