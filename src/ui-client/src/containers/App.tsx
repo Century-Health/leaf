@@ -82,8 +82,6 @@ class App extends React.Component<Props, state> {
     }
 
     public componentDidMount() {
-        console.log('componentDidMount');
-        console.log(document.cookie, 'cookie');
         const { dispatch } = this.props;
         this.handleBrowserHeartbeat();
         this.handleSessionTokenRefresh();
@@ -97,7 +95,6 @@ class App extends React.Component<Props, state> {
     private async fetchUserDetails() {
         try {
             const response = await getUserDetails();
-            console.log(response, 'response.data');
             this.setState({ currentUser: response });
         } catch (error) {
             console.error('Error fetching user details:', error);
@@ -131,14 +128,14 @@ class App extends React.Component<Props, state> {
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                 Please Login to 
                 <span>
-                    <a href="https://staging.century.health" 
+                    <a href="https://app.century.health/home?setAT=true"
                         style={{ color: 'blue', marginLeft: '5px', marginRight: '5px' }}
                      target="_blank"
                     >
                         Century Health
                     </a>
                 </span>
-                to continue.
+                and refresh the page to continue.
             </div>
             : <div className={classes.join(' ')} onMouseDown={this.handleActivity} onKeyDown={this.handleActivity}>
                 {this.state.currentUser + ' Current User'}
