@@ -36,8 +36,7 @@ import { sleep } from '../utils/Sleep';
 import NotificationModal from '../components/Modals/NotificationModal/NotificationModal';
 import MaintainenceModal from '../components/Modals/MaintainenceModal/MaintainenceModal';
 import './App.css';
-import { firebaseAuth } from '../firebase/auth';
-import { onAuthStateChanged, User } from "@firebase/auth";
+import { getUserDetails } from '../services/centuryHealthAPI';
 
 interface OwnProps {
 }
@@ -62,7 +61,7 @@ interface StateProps {
 }
 
 interface state {
-    currentUser: "loading" | null | {};
+    currentUser: "loading" | null | any;
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -83,31 +82,26 @@ class App extends React.Component<Props, state> {
     }
 
     public componentDidMount() {
+        console.log('componentDidMount');
+        console.log(document.cookie, 'cookie');
         const { dispatch } = this.props;
         this.handleBrowserHeartbeat();
         this.handleSessionTokenRefresh();
         dispatch(getIdToken());
         dispatch(refreshServerStateLoop());
 
-        // Add Firebase auth state listener
-        this.unsubscribeAuth = onAuthStateChanged(firebaseAuth, async (user) => {
-            const idToken = await user?.getIdToken(true);
-            
-            if (user) {
-                const newUser: any = user;
-                newUser.idToken = idToken;  
-                this.setState({ currentUser: newUser });
-            } else {
-                this.setState({ currentUser: null });
-            }
-        });
+        // Replace Firebase auth with direct API call
+        this.fetchUserDetails();
     }
 
-    private unsubscribeAuth: (() => void) | undefined;
-
-    public componentWillUnmount() {
-        if (this.unsubscribeAuth) {
-            this.unsubscribeAuth();
+    private async fetchUserDetails() {
+        try {
+            const response = await getUserDetails();
+            console.log(response, 'response.data');
+            this.setState({ currentUser: response });
+        } catch (error) {
+            console.error('Error fetching user details:', error);
+            this.setState({ currentUser: null });
         }
     }
 

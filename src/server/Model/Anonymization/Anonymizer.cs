@@ -86,13 +86,6 @@ namespace Model.Anonymization
             return type.IsValueType ? Activator.CreateInstance(type) : null;
         }
 
-        // protected virtual Dictionary<Type, Actor> TypeMap => new Dictionary<Type, Actor>
-        // {
-        //     { typeof(string), Fuzzer.String },
-        //     { typeof(DateTime), Fuzzer.DateTime },
-        //     { typeof(DateTime?), Fuzzer.NullableDateTime },
-        // };
-
         protected virtual Dictionary<Type, Actor> TypeMap => new Dictionary<Type, Actor>
         {
             { typeof(string), Fuzzer.String },
@@ -135,62 +128,9 @@ namespace Model.Anonymization
         }
     }
 
-    // static class Fuzzer
-    // {
-    //     public static readonly Actor String = (record, prop, salt, pepper, parameters) =>
-    //     {
-    //         var p = pepper.ToString();
-    //         var s = salt.ToString();
-    //         var value = (string)prop.GetValue(record);
-
-    //         var composite = p + s + value;
-
-    //         prop.SetValue(record, composite.GetConsistentHashCode().ToString());
-    //     };
-
-    //     public static readonly Actor DateTime = (record, prop, salt, pepper, parameters) =>
-    //     {
-    //         var rand = new Random(salt.GetHashCode());
-    //         var value = (DateTime)prop.GetValue(record);
-    //         var shift = rand.Next(parameters.LowerBound, parameters.UpperBound);
-
-    //         prop.SetValue(record, parameters.DateShifter(value, shift));
-    //     };
-
-    //     public static readonly Actor NullableDateTime = (record, prop, salt, pepper, parameters) =>
-    //     {
-    //         var rand = new Random(salt.GetHashCode());
-    //         var value = (DateTime?)prop.GetValue(record);
-
-    //         if (value.HasValue)
-    //         {
-    //             var shift = rand.Next(parameters.LowerBound, parameters.UpperBound);
-    //             prop.SetValue(record, parameters.DateShifter(value.Value, shift));
-    //         }
-    //     };
-    // }
-
     static class Fuzzer
-{
-    public static readonly Actor String = (record, prop, salt, pepper, parameters) =>
     {
-        var p = pepper.ToString();
-        var s = salt.ToString();
-        var value = (string)prop.GetValue(record);
-
-        var composite = p + s + value;
-
-        prop.SetValue(record, composite.GetConsistentHashCode().ToString());
-    };
-
-    public static readonly Actor DateTimeActor = (record, prop, salt, pepper, parameters) =>
-    {
-        var rand = new Random(salt.GetHashCode());
-        var value = (System.DateTime)prop.GetValue(record);
-        var shift = rand.Next(parameters.LowerBound, parameters.UpperBound);
-
-        // Clamp shift if needed
-        if (shift > 0 && value > System.DateTime.MaxValue.AddDays(-shift))
+        public static readonly Actor String = (record, prop, salt, pepper, parameters) =>
         {
             var p = pepper.ToString();
             var s = salt.ToString();
@@ -261,16 +201,8 @@ namespace Model.Anonymization
 
                 prop.SetValue(record, shiftedDate);
             }
-            catch (ArgumentOutOfRangeException)
-            {
-                shiftedDate = (shift < 0) ? System.DateTime.MinValue : System.DateTime.MaxValue;
-            }
-
-            prop.SetValue(record, shiftedDate);
-        }
-    };
-}
-
+        };
+    }
 
     class AnonymizationPlanner : IDisposable
     {
