@@ -36,8 +36,7 @@ import { sleep } from '../utils/Sleep';
 import NotificationModal from '../components/Modals/NotificationModal/NotificationModal';
 import MaintainenceModal from '../components/Modals/MaintainenceModal/MaintainenceModal';
 import './App.css';
-import { firebaseAuth } from '../firebase/auth';
-import { onAuthStateChanged, User } from "@firebase/auth";
+import { getUserDetails } from '../services/centuryHealthAPI';
 
 interface OwnProps {
 }
@@ -62,7 +61,7 @@ interface StateProps {
 }
 
 interface state {
-    currentUser: "loading" | null | {};
+    currentUser: "loading" | null | any;
 }
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -93,25 +92,17 @@ class App extends React.Component<Props, state> {
         dispatch(getIdToken());
         dispatch(refreshServerStateLoop());
 
-        // Add Firebase auth state listener
-        this.unsubscribeAuth = onAuthStateChanged(firebaseAuth, async (user) => {
-            const idToken = await user?.getIdToken(true);
-            
-            if (user) {
-                const newUser: any = user;
-                newUser.idToken = idToken;  
-                this.setState({ currentUser: newUser });
-            } else {
-                this.setState({ currentUser: null });
-            }
-        });
+        // Replace Firebase auth with direct API call
+        this.fetchUserDetails();
     }
 
-    private unsubscribeAuth: (() => void) | undefined;
-
-    public componentWillUnmount() {
-        if (this.unsubscribeAuth) {
-            this.unsubscribeAuth();
+    private async fetchUserDetails() {
+        try {
+            const response = await getUserDetails();
+            this.setState({ currentUser: response });
+        } catch (error) {
+            console.error('Error fetching user details:', error);
+            this.setState({ currentUser: null });
         }
     }
 
@@ -141,14 +132,14 @@ class App extends React.Component<Props, state> {
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                 Please Login to 
                 <span>
-                    <a href="https://staging.century.health" 
+                    <a href="https://app.century.health/home?setAT=true"
                         style={{ color: 'blue', marginLeft: '5px', marginRight: '5px' }}
                      target="_blank"
                     >
                         Century Health
                     </a>
                 </span>
-                to continue.
+                and refresh the page to continue.
             </div>
             : <div className={classes.join(' ')} onMouseDown={this.handleActivity} onKeyDown={this.handleActivity}>
                 {this.state.currentUser + ' Current User'}
