@@ -149,12 +149,11 @@ class App extends React.Component<Props, state> {
                 and refresh the page to continue.
             </div>
             : <div className={classes.join(' ')} onMouseDown={this.handleActivity} onKeyDown={this.handleActivity}>
-                {this.state.currentUser + ' Current User'}
                 <Attestation />
                 <CohortCountBox />
                 <Header />
                 <Sidebar currentRoute={currentRoute} dispatch={dispatch} routes={routes} cohortCountState={cohortCountState} currentAdminPane={currentAdminPane} />
-                <HelpButton auth={auth} dispatch={dispatch} />
+                {/* <HelpButton auth={auth} dispatch={dispatch} /> */}
                 <UserQuestionModal dispatch={dispatch} state={userQuestion} queries={queries} />
                 <SideNotification dispatch={dispatch} state={sideNotification} />
                 {session.context &&
