@@ -24,7 +24,7 @@ import Sidebar from './Sidebar/Sidebar';
 import InformationModal from '../components/Modals/InformationModal/InformationModal';
 import ConfirmationModal from '../components/Modals/ConfirmationModal/ConfirmationModal';
 import NoClickModal from '../components/Modals/NoClickModal/NoClickModal';
-import { showInfoModal } from '../actions/generalUi';
+import { setRouteConfig, showInfoModal } from '../actions/generalUi';
 import HelpButton from '../components/HelpButton/HelpButton';
 import { PatientCountState } from '../models/state/CohortState';
 import { AdminPanelPane } from '../models/state/AdminState';
@@ -106,6 +106,10 @@ class App extends React.Component<Props, state> {
                     ...this.props.auth.userContext!,
                     isAdmin: false
                 }));
+                // If the user is a researcher, we need to remove the admin routes
+                this.props.dispatch(setRouteConfig(
+                    this.props.routes.filter((route) => route.index !== Routes.AdminPanel)
+                ));
             }
         } catch (error) {
             console.error('Error fetching user details:', error);
