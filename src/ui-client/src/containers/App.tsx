@@ -8,7 +8,7 @@
 import React from 'react';
 
 import { connect } from 'react-redux';
-import { getIdToken } from '../actions/auth';
+import { getIdToken, receiveIdToken } from '../actions/auth';
 import { refreshSession, saveSessionAndLogout, refreshServerStateLoop } from '../actions/session';
 import { RouteConfig } from '../config/routes';
 import Attestation from '../containers/Attestation/Attestation';
@@ -37,6 +37,7 @@ import NotificationModal from '../components/Modals/NotificationModal/Notificati
 import MaintainenceModal from '../components/Modals/MaintainenceModal/MaintainenceModal';
 import './App.css';
 import { getUserDetails } from '../services/centuryHealthAPI';
+import { AuthorityMap } from '../utils/constants';
 
 interface OwnProps {
 }
@@ -100,6 +101,12 @@ class App extends React.Component<Props, state> {
         try {
             const response = await getUserDetails();
             this.setState({ currentUser: response });
+            if(response.role === AuthorityMap.RESEARCHER) {
+                this.props.dispatch(receiveIdToken({
+                    ...this.props.auth.userContext!,
+                    isAdmin: false
+                }));
+            }
         } catch (error) {
             console.error('Error fetching user details:', error);
             this.setState({ currentUser: null });
@@ -247,7 +254,8 @@ const mapStateToProps = (state: AppState) => {
         routes: state.generalUi.routes,
         session: state.session,
         sideNotification: state.generalUi.sideNotification,
-        userQuestion: state.generalUi.userQuestion
+        userQuestion: state.generalUi.userQuestion,
+        user: state.auth.userContext
     };
 };
 
