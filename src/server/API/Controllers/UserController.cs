@@ -53,7 +53,6 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IdTokenDTO>> GetUser()
         { 
-            logger.LogInformation("GetUser request received from IP: {IP}", HttpContext.Connection.RemoteIpAddress);
             try
             {
                 logger.LogDebug("Attempting to generate ID token for user: {User}", HttpContext.User?.Identity?.Name ?? "anonymous");

@@ -24,7 +24,7 @@ import Sidebar from './Sidebar/Sidebar';
 import InformationModal from '../components/Modals/InformationModal/InformationModal';
 import ConfirmationModal from '../components/Modals/ConfirmationModal/ConfirmationModal';
 import NoClickModal from '../components/Modals/NoClickModal/NoClickModal';
-import { showInfoModal } from '../actions/generalUi';
+import { setRouteConfig, showInfoModal } from '../actions/generalUi';
 import HelpButton from '../components/HelpButton/HelpButton';
 import { PatientCountState } from '../models/state/CohortState';
 import { AdminPanelPane } from '../models/state/AdminState';
@@ -83,10 +83,6 @@ class App extends React.Component<Props, state> {
     }
 
     public componentDidMount() {
-        console.log('componentDidMount');
-        console.log(this.state.currentUser);
-        console.log(process.env.PUBLIC_URL);
-        console.log(process.env);
         const { dispatch } = this.props;
         this.handleBrowserHeartbeat();
         this.handleSessionTokenRefresh();
@@ -106,6 +102,10 @@ class App extends React.Component<Props, state> {
                     ...this.props.auth.userContext!,
                     isAdmin: false
                 }));
+                // If the user is a researcher, we need to remove the admin routes
+                this.props.dispatch(setRouteConfig(
+                    this.props.routes.filter((route) => route.index !== Routes.AdminPanel)
+                ));
             }
         } catch (error) {
             console.error('Error fetching user details:', error);
@@ -149,12 +149,11 @@ class App extends React.Component<Props, state> {
                 and refresh the page to continue.
             </div>
             : <div className={classes.join(' ')} onMouseDown={this.handleActivity} onKeyDown={this.handleActivity}>
-                {this.state.currentUser + ' Current User'}
                 <Attestation />
                 <CohortCountBox />
-                <Header />
+                <Header chUser={this.state.currentUser} />
                 <Sidebar currentRoute={currentRoute} dispatch={dispatch} routes={routes} cohortCountState={cohortCountState} currentAdminPane={currentAdminPane} />
-                <HelpButton auth={auth} dispatch={dispatch} />
+                {/* <HelpButton auth={auth} dispatch={dispatch} /> */}
                 <UserQuestionModal dispatch={dispatch} state={userQuestion} queries={queries} />
                 <SideNotification dispatch={dispatch} state={sideNotification} />
                 {session.context &&
