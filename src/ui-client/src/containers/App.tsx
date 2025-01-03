@@ -155,7 +155,7 @@ class App extends React.Component<Props, state> {
             : <div className={classes.join(' ')} onMouseDown={this.handleActivity} onKeyDown={this.handleActivity}>
                 <Attestation />
                 <CohortCountBox />
-                <Header />
+                <Header chUser={this.state.currentUser} />
                 <Sidebar currentRoute={currentRoute} dispatch={dispatch} routes={routes} cohortCountState={cohortCountState} currentAdminPane={currentAdminPane} />
                 {/* <HelpButton auth={auth} dispatch={dispatch} /> */}
                 <UserQuestionModal dispatch={dispatch} state={userQuestion} queries={queries} />
