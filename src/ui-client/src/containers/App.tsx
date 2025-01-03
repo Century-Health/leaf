@@ -99,13 +99,24 @@ class App extends React.Component<Props, state> {
             this.setState({ currentUser: response });
             if(response.role === AuthorityMap.RESEARCHER) {
                 this.props.dispatch(receiveIdToken({
-                    ...this.props.auth.userContext!,
-                    isAdmin: false
+                    ...this.props.auth.userContext,
+                    isAdmin: false,
+                    isSuperUser: false,
+                    isPhiOkay: false,
+                    isFederatedOkay: false
                 }));
                 // If the user is a researcher, we need to remove the admin routes
                 this.props.dispatch(setRouteConfig(
                     this.props.routes.filter((route) => route.index !== Routes.AdminPanel)
                 ));
+            } else if(response.role === AuthorityMap.ADMIN) {
+                this.props.dispatch(receiveIdToken({
+                    ...this.props.auth.userContext,
+                    isAdmin: true,
+                    isSuperUser: false,
+                    isPhiOkay: false,
+                    isFederatedOkay: false
+                }));
             }
         } catch (error) {
             console.error('Error fetching user details:', error);
