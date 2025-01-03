@@ -124,6 +124,12 @@ class App extends React.Component<Props, state> {
         }
     }
 
+    private handleCHLogin = () => {
+        document.cookie = `setAT=; path=/; domain=century.health; secure; SameSite=Strict`;
+        document.cookie = `setAT=${true}; path=/; domain=century.health; secure; SameSite=Strict`;
+        window.open('https://app.century.health/', '_blank');
+    }
+
     public componentDidUpdate() { 
         return; 
     }
@@ -150,12 +156,12 @@ class App extends React.Component<Props, state> {
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                 Please Login to 
                 <span>
-                    <a href="https://app.century.health/home?setAT=true"
-                        style={{ color: 'blue', marginLeft: '5px', marginRight: '5px' }}
-                     target="_blank"
+                    <span
+                        onClick={this.handleCHLogin}
+                        style={{ color: 'blue', marginLeft: '5px', marginRight: '5px', cursor: 'pointer' }}
                     >
                         Century Health
-                    </a>
+                    </span>
                 </span>
                 and refresh the page to continue.
             </div>
