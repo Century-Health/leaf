@@ -30,14 +30,14 @@ export default class UserButton extends React.PureComponent<Props> {
 
     public render() {
         const c = this.className;
-        const { auth, federated, imports, helpClickHandler, logoutClickHandler, myLeafModalToggleHandler, user, CHUser } = this.props;
+        const { auth, federated, imports, helpClickHandler, logoutClickHandler, myLeafModalToggleHandler, user, chUser } = this.props;
         const username = user ? user.name : '';
 
         return (
             <NavItem className={`${c}-myleaf ${c}-item-dropdown ${c}-item-hover-dark`}>
                 <div className={`${c}-myleaf-icon-container`}>
                     <FiUser className={`${c}-options-icon ${c}-myleaf-icon`}/>
-                    <span className={`${c}-options-text`}>{CHUser?.firstName || 'User'}</span>
+                    <span className={`${c}-options-text`}>{chUser?.firstName || 'User'}</span>
                     <FaChevronDown className={`${c}-options-chevron`}/>
                 </div>
                 <div className={`${c}-option-container ${c}-myleaf-container`}>
