@@ -127,7 +127,7 @@ class App extends React.Component<Props, state> {
     private handleCHLogin = () => {
         document.cookie = `setAT=; path=/; domain=century.health; secure; SameSite=Strict`;
         document.cookie = `setAT=${true}; path=/; domain=century.health; secure; SameSite=Strict`;
-        window.open('https://app.century.health/', '_blank');
+        window.open('https://staging.century.health/', '_blank');
     }
 
     public componentDidUpdate() { 
