@@ -8,7 +8,7 @@
 import React from 'react';
 
 import { connect } from 'react-redux';
-import { getIdToken } from '../actions/auth';
+import { getIdToken, receiveIdToken } from '../actions/auth';
 import { refreshSession, saveSessionAndLogout, refreshServerStateLoop } from '../actions/session';
 import { RouteConfig } from '../config/routes';
 import Attestation from '../containers/Attestation/Attestation';
@@ -24,7 +24,7 @@ import Sidebar from './Sidebar/Sidebar';
 import InformationModal from '../components/Modals/InformationModal/InformationModal';
 import ConfirmationModal from '../components/Modals/ConfirmationModal/ConfirmationModal';
 import NoClickModal from '../components/Modals/NoClickModal/NoClickModal';
-import { showInfoModal } from '../actions/generalUi';
+import { setRouteConfig, showInfoModal } from '../actions/generalUi';
 import HelpButton from '../components/HelpButton/HelpButton';
 import { PatientCountState } from '../models/state/CohortState';
 import { AdminPanelPane } from '../models/state/AdminState';
@@ -36,6 +36,8 @@ import { sleep } from '../utils/Sleep';
 import NotificationModal from '../components/Modals/NotificationModal/NotificationModal';
 import MaintainenceModal from '../components/Modals/MaintainenceModal/MaintainenceModal';
 import './App.css';
+import { getUserDetails } from '../services/centuryHealthAPI';
+import { AuthorityMap } from '../utils/constants';
 
 interface OwnProps {
 }
@@ -59,14 +61,26 @@ interface StateProps {
     userQuestion: UserInquiryState;
 }
 
+interface state {
+    currentUser: "loading" | null | any;
+}
+
 type Props = StateProps & DispatchProps & OwnProps;
 let inactivityTimer: NodeJS.Timer;
 
-class App extends React.Component<Props> {
+
+class App extends React.Component<Props, state> {
     private sessionTokenRefreshMinutes = 4;
     private serverStateCheckIntervalMinutes = 1;
     private heartbeatCheckIntervalSeconds = 10;
     private lastHeartbeat = new Date();
+
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            currentUser: "loading"
+        };
+    }
 
     public componentDidMount() {
         const { dispatch } = this.props;
@@ -74,6 +88,46 @@ class App extends React.Component<Props> {
         this.handleSessionTokenRefresh();
         dispatch(getIdToken());
         dispatch(refreshServerStateLoop());
+
+        // Replace Firebase auth with direct API call
+        this.fetchUserDetails();
+    }
+
+    private async fetchUserDetails() {
+        try {
+            const response = await getUserDetails();
+            this.setState({ currentUser: response });
+            if(response.role === AuthorityMap.RESEARCHER) {
+                this.props.dispatch(receiveIdToken({
+                    ...this.props.auth.userContext,
+                    isAdmin: false,
+                    isSuperUser: false,
+                    isPhiOkay: false,
+                    isFederatedOkay: false
+                }));
+                // If the user is a researcher, we need to remove the admin routes
+                this.props.dispatch(setRouteConfig(
+                    this.props.routes.filter((route) => route.index !== Routes.AdminPanel)
+                ));
+            } else if(response.role === AuthorityMap.ADMIN) {
+                this.props.dispatch(receiveIdToken({
+                    ...this.props.auth.userContext,
+                    isAdmin: true,
+                    isSuperUser: false,
+                    isPhiOkay: false,
+                    isFederatedOkay: false
+                }));
+            }
+        } catch (error) {
+            console.error('Error fetching user details:', error);
+            this.setState({ currentUser: null });
+        }
+    }
+
+    private handleCHLogin = () => {
+        document.cookie = `setAT=; path=/; domain=century.health; secure; SameSite=Strict`;
+        document.cookie = `setAT=${true}; path=/; domain=century.health; secure; SameSite=Strict`;
+        window.open('https://app.century.health/', '_blank');
     }
 
     public componentDidUpdate() { 
@@ -96,12 +150,27 @@ class App extends React.Component<Props> {
         if (browser) { classes.push(BrowserType[browser.type].toLowerCase())};
 
         return (
-            <div className={classes.join(' ')} onMouseDown={this.handleActivity} onKeyDown={this.handleActivity}>
+            this.state.currentUser === "loading" 
+            ? <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>
+            : this.state.currentUser === null ?
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                Please Login to 
+                <span>
+                    <span
+                        onClick={this.handleCHLogin}
+                        style={{ color: 'blue', marginLeft: '5px', marginRight: '5px', cursor: 'pointer' }}
+                    >
+                        Century Health
+                    </span>
+                </span>
+                and refresh the page to continue.
+            </div>
+            : <div className={classes.join(' ')} onMouseDown={this.handleActivity} onKeyDown={this.handleActivity}>
                 <Attestation />
                 <CohortCountBox />
-                <Header />
+                <Header chUser={this.state.currentUser} />
                 <Sidebar currentRoute={currentRoute} dispatch={dispatch} routes={routes} cohortCountState={cohortCountState} currentAdminPane={currentAdminPane} />
-                <HelpButton auth={auth} dispatch={dispatch} />
+                {/* <HelpButton auth={auth} dispatch={dispatch} /> */}
                 <UserQuestionModal dispatch={dispatch} state={userQuestion} queries={queries} />
                 <SideNotification dispatch={dispatch} state={sideNotification} />
                 {session.context &&
@@ -201,7 +270,8 @@ const mapStateToProps = (state: AppState) => {
         routes: state.generalUi.routes,
         session: state.session,
         sideNotification: state.generalUi.sideNotification,
-        userQuestion: state.generalUi.userQuestion
+        userQuestion: state.generalUi.userQuestion,
+        user: state.auth.userContext
     };
 };
 
