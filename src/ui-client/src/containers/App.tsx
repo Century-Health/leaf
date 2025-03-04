@@ -103,7 +103,8 @@ class App extends React.Component<Props, state> {
                     isAdmin: false,
                     isSuperUser: false,
                     isPhiOkay: false,
-                    isFederatedOkay: false
+                    isFederatedOkay: false,
+                    chPlanDetails: response.plans
                 }));
                 // If the user is a researcher, we need to remove the admin routes
                 this.props.dispatch(setRouteConfig(
@@ -115,7 +116,8 @@ class App extends React.Component<Props, state> {
                     isAdmin: true,
                     isSuperUser: false,
                     isPhiOkay: false,
-                    isFederatedOkay: false
+                    isFederatedOkay: false,
+                    chPlanDetails: response.plans
                 }));
             }
         } catch (error) {
