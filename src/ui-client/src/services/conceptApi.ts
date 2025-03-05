@@ -15,6 +15,7 @@ import { HttpFactory } from './HttpFactory';
 const makeRequest = async (state: AppState, requestString: string, requestParams?: object) => {
     const { token } = state.session.context!;
     const http = HttpFactory.authenticated(token);
+
     const request = requestParams
         ? http.get(requestString, requestParams)
         : http.get(requestString)
@@ -25,7 +26,9 @@ const makeRequest = async (state: AppState, requestString: string, requestParams
  * Fetch root concepts. Called at app login.
  */
 export const fetchRootConcepts = (state: AppState) => {
-    return makeRequest(state, 'api/concept');
+    const selectedPlan = document.cookie.split('selectedPlan=')[1]
+    const parsedPlan = JSON.parse(selectedPlan)
+    return makeRequest(state, `api/concept/${parsedPlan.datasetId}`);
 };
 
 /*
