@@ -12,14 +12,10 @@ import { HttpFactory } from './HttpFactory';
 /*
  * Private general function for making any concept request.
  */
-const makeRequest = async (state: AppState, requestString: string, method: 'GET' | 'POST' = 'GET', requestParams?: object) => {
+const makeRequest = async (state: AppState, requestString: string, requestParams?: object) => {
     const { token } = state.session.context!;
     const http = HttpFactory.authenticated(token);
-    
-    if (method === 'POST') {
-        return http.post(requestString, requestParams);
-    }
-    
+
     const request = requestParams
         ? http.get(requestString, requestParams)
         : http.get(requestString)
@@ -30,7 +26,9 @@ const makeRequest = async (state: AppState, requestString: string, method: 'GET'
  * Fetch root concepts. Called at app login.
  */
 export const fetchRootConcepts = (state: AppState) => {
-    return makeRequest(state, 'api/concept', 'POST');
+    const selectedPlan = document.cookie.split('selectedPlan')[1]
+    const parsedPlan = JSON.parse(selectedPlan)
+    return makeRequest(state, `api/concept/${parsedPlan.datasetId}`);
 };
 
 /*
