@@ -26,7 +26,7 @@ const makeRequest = async (state: AppState, requestString: string, requestParams
  * Fetch root concepts. Called at app login.
  */
 export const fetchRootConcepts = (state: AppState) => {
-    const selectedPlan = document.cookie.split('selectedPlan=')[1]
+    const selectedPlan = document.cookie.split('selectedPlan=')[1].split(';')[0]
     const parsedPlan = JSON.parse(selectedPlan)
     return makeRequest(state, `api/concept/${parsedPlan.datasetId}`);
 };
