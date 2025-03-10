@@ -29,7 +29,9 @@ import ImportButton from '../../components/Header/ImportButton';
 import ImportState from '../../models/state/Import';
 import './Header.css';
 
-interface OwnProps {}
+interface OwnProps {
+    chUser: any;
+}
 interface StateProps {
     auth: AuthorizationState;
     importState: ImportState;
@@ -49,7 +51,7 @@ type Props = StateProps & DispatchProps & OwnProps;
 
 class Header extends React.PureComponent<Props> {
     public render() {
-        const { auth, user, responders, dispatch, queryState, importState } = this.props;
+        const { auth, user, responders, dispatch, queryState, importState, chUser } = this.props;
         const c = 'header';
 
         return (
@@ -92,6 +94,7 @@ class Header extends React.PureComponent<Props> {
                             logoutClickHandler={this.handleLogoutClick} 
                             myLeafModalToggleHandler={this.handleMyleafModalToggleClick}
                             user={user} 
+                            chUser={chUser}
                         />
 
                     </Nav>

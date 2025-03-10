@@ -52,11 +52,13 @@ namespace API.Controllers
         [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IdTokenDTO>> GetUser()
-        {
+        { 
             try
             {
+                logger.LogDebug("Attempting to generate ID token for user: {User}", HttpContext.User?.Identity?.Name ?? "anonymous");
                 var login = await jwtProvider.IdToken(HttpContext);
-
+                
+                logger.LogInformation("Successfully generated ID token for user");
                 return Ok(new IdTokenDTO { IdToken = login });
             }
             catch (LeafAuthenticationException lae)

@@ -51,3 +51,9 @@ docker run \
     --name leaf_api_demo \
     -d \
     leaf_api
+
+# Get container's public IP address
+echo "Container public IP address:"
+docker exec leaf_api_demo curl -s ifconfig.me
+# or alternatively:
+# docker exec leaf_api_demo curl -s ipinfo.io/ip
