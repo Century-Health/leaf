@@ -103,7 +103,8 @@ class App extends React.Component<Props, state> {
                     isAdmin: false,
                     isSuperUser: false,
                     isPhiOkay: false,
-                    isFederatedOkay: false
+                    isFederatedOkay: false,
+                    chPlanDetails: response.plans
                 }));
                 // If the user is a researcher, we need to remove the admin routes
                 this.props.dispatch(setRouteConfig(
@@ -115,7 +116,8 @@ class App extends React.Component<Props, state> {
                     isAdmin: true,
                     isSuperUser: false,
                     isPhiOkay: false,
-                    isFederatedOkay: false
+                    isFederatedOkay: false,
+                    chPlanDetails: response.plans
                 }));
             }
         } catch (error) {
@@ -127,7 +129,7 @@ class App extends React.Component<Props, state> {
     private handleCHLogin = () => {
         document.cookie = `setAT=; path=/; domain=century.health; secure; SameSite=Strict`;
         document.cookie = `setAT=${true}; path=/; domain=century.health; secure; SameSite=Strict`;
-        window.open('https://app.century.health/', '_blank');
+        window.open('https://staging.century.health/', '_blank');
     }
 
     public componentDidUpdate() { 

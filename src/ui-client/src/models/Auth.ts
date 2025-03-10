@@ -131,6 +131,7 @@ export interface UserContext {
     scope: string;
     token: string;
     version: string;
+    chPlanDetails?: any;
 }
 
 export interface IdTokenAndDates {
