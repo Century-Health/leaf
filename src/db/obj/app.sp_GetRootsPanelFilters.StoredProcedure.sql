@@ -20,12 +20,13 @@ GO
 CREATE PROCEDURE [app].[sp_GetRootsPanelFilters]
     @user auth.[User],
     @groups auth.GroupMembership READONLY,
-    @admin bit = 0
+    @admin bit = 0,
+    @datasetId uniqueidentifier = NULL
 AS
 BEGIN
     SET NOCOUNT ON
 
-    EXEC app.sp_GetRootConcepts @user, @groups, @admin = @admin;
+    EXEC app.sp_GetRootConcepts @user, @groups, @admin = @admin, @datasetId = @datasetId;
 
     SELECT
         f.Id,
@@ -37,7 +38,7 @@ BEGIN
     FROM
         app.PanelFilter f
     JOIN app.Concept c on f.ConceptId = c.Id
-    
+    WHERE (@datasetId IS NULL OR c.dataset_id = @datasetId)
 END
 
 GO

@@ -200,7 +200,7 @@ namespace Services.Search
             }
         }
 
-        public async Task<ConceptTree> GetTreetopAsync()
+        public async Task<ConceptTree> GetTreetopAsync(string? datasetId = null)
         {
             using (var cn = new SqlConnection(opts.ConnectionString))
             {
@@ -208,7 +208,12 @@ namespace Services.Search
 
                 var grid = await cn.QueryMultipleAsync(
                     queryRootsPanelFilters,
-                    new { user = user.UUID, groups = GroupMembership.From(user), admin = user.IsAdmin },
+                    new { 
+                        user = user.UUID, 
+                        groups = GroupMembership.From(user), 
+                        admin = user.IsAdmin,
+                        datasetId = datasetId
+                    },
                     commandTimeout: opts.DefaultTimeout,
                     commandType: CommandType.StoredProcedure
                 );
