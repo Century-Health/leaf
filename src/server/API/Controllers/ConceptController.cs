@@ -107,6 +107,12 @@ namespace API.Controllers
         {
             try
             {
+                // validation for datasetId
+                if (string.IsNullOrWhiteSpace(datasetId))
+                {
+                    return BadRequest("Dataset ID cannot be empty");
+                }
+                
                 var tree = await searcher.GetTreetopAsync(datasetId);
                 var dto = new ConceptTreeDTO(tree);
                 return Ok(dto);

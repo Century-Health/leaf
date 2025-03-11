@@ -33,7 +33,7 @@ namespace Model.Search
             Task<IEnumerable<Concept>> GetWithParentsBySearchTermAsync(Guid? rootId, string[] terms);
             Task<IEnumerable<Concept>> GetRootsAsync();
 
-            Task<ConceptTree> GetTreetopAsync(string? datasetId = null);
+            Task<ConceptTree> GetTreetopAsync(string datasetId);
         }
 
         readonly IConceptTreeReader reader;
@@ -115,7 +115,7 @@ namespace Model.Search
         /// </summary>
         /// <returns>The root concept tree.</returns>
         /// <exception cref="DbException"/>
-        public async Task<ConceptTree> GetTreetopAsync(string? datasetId = null) => await reader.GetTreetopAsync(datasetId);
+        public async Task<ConceptTree> GetTreetopAsync(string datasetId) => await reader.GetTreetopAsync(datasetId);
 
         /// <summary>
         /// Provides a concept by id.
