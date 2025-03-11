@@ -38,7 +38,7 @@ BEGIN
     FROM
         app.PanelFilter f
     JOIN app.Concept c on f.ConceptId = c.Id
-    WHERE (@datasetId IS NULL OR c.dataset_id = @datasetId)
+    WHERE (dataset_id IS NOT NULL AND dataset_id = @datasetId);
 END
 
 GO

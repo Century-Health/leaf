@@ -200,7 +200,7 @@ namespace Services.Search
             }
         }
 
-        public async Task<ConceptTree> GetTreetopAsync(string? datasetId = null)
+        public async Task<ConceptTree> GetTreetopAsync(string datasetId)
         {
             using (var cn = new SqlConnection(opts.ConnectionString))
             {

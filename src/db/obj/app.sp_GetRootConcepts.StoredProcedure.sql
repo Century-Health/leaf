@@ -31,7 +31,7 @@ BEGIN
     SELECT Id
     FROM app.Concept
     WHERE IsRoot = 1
-    AND (@datasetId IS NULL OR dataset_id = @datasetId);
+    AND (dataset_id IS NOT NULL AND dataset_id = @datasetId);
 
     DECLARE @allowed app.ResourceIdTable;
     INSERT INTO @allowed
