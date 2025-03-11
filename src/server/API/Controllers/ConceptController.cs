@@ -100,19 +100,26 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<ActionResult<ConceptTreeDTO>> GetTreeTop(
-            [FromServices] ConceptTreeSearcher searcher)
+        [HttpGet("{datasetId}")]
+        public async Task<ActionResult<ConceptTreeDTO>> GetTreeTopByDatasetId(
+            [FromServices] ConceptTreeSearcher searcher,
+            [FromRoute] string datasetId)
         {
             try
             {
-                var tree = await searcher.GetTreetopAsync();
+                // validation for datasetId
+                if (string.IsNullOrWhiteSpace(datasetId))
+                {
+                    return BadRequest("Dataset ID cannot be empty");
+                }
+                
+                var tree = await searcher.GetTreetopAsync(datasetId);
                 var dto = new ConceptTreeDTO(tree);
                 return Ok(dto);
             }
             catch (Exception e)
             {
-                log.LogError("Failed to retrieve concept treetop. Error:{Error}", e.ToString());
+                log.LogError("Failed to retrieve concept treetop for dataset {DatasetId}. Error:{Error}", datasetId, e.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
