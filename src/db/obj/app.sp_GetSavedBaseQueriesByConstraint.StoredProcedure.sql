@@ -17,7 +17,8 @@ GO
 -- =======================================
 CREATE PROCEDURE [app].[sp_GetSavedBaseQueriesByConstraint]
     @user auth.[User],
-    @groups auth.GroupMembership READONLY
+    @groups auth.GroupMembership READONLY,
+    @datasetId varchar(100)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -47,7 +48,7 @@ BEGIN
         q.Updated,
         [Count] = COUNT(c.QueryId)
     FROM app.Query q
-    LEFT JOIN app.Cohort c on q.Id = c.QueryId
+    INNER JOIN app.Cohort c on q.Id = c.QueryId AND c.datasetId = @datasetId
     WHERE (q.[Owner] = @user OR q.Id IN (SELECT QueryId FROM permitted))
     AND UniversalId IS NOT NULL
     AND Nonce IS NULL
