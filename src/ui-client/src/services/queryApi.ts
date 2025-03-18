@@ -54,12 +54,16 @@ export const saveQueryHomeNode = async (state: AppState, panels: PanelDTO[], pan
     const { token } = state.session.context!;
     const http = HttpFactory.authenticated(token);
     const id = state.cohort.networkCohorts.get(0)!.count.queryId;
+    const selectedPlan = document.cookie.split('selectedPlan=')[1].split(';')[0]
+    const parsedPlan = JSON.parse(selectedPlan)
+    const datasetId = parsedPlan.datasetId
     return http.post(`/api/query/${id}`, {
         ...state.queries.current,
         name: state.queries.current.name.trim(),
         category: state.queries.current.category.trim(),
         panels,
-        panelFilters
+        panelFilters,
+        datasetId
     });
 };
 
