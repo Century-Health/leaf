@@ -19,7 +19,8 @@ GO
 CREATE PROCEDURE [app].[sp_GetRootConcepts]
     @user auth.[User],
     @groups auth.GroupMembership READONLY,
-    @admin bit = 0
+    @admin bit = 0,
+    @datasetId uniqueidentifier = NULL
 AS
 BEGIN
     SET NOCOUNT ON
@@ -29,7 +30,8 @@ BEGIN
     INSERT INTO @requested
     SELECT Id
     FROM app.Concept
-    WHERE IsRoot = 1;
+    WHERE IsRoot = 1
+    AND (dataset_id IS NOT NULL AND dataset_id = @datasetId);
 
     DECLARE @allowed app.ResourceIdTable;
     INSERT INTO @allowed
