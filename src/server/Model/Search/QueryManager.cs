@@ -61,10 +61,10 @@ namespace Model.Search
             this.validator = validator;
         }
 
-        public async Task<IEnumerable<BaseQuery>> GetQueriesAsync()
+        public async Task<IEnumerable<BaseQuery>> GetQueriesAsync(string datasetId)
         {
             log.LogInformation("Getting queries");
-            var queries = await service.GetQueriesAsync();
+            var queries = await service.GetQueriesAsync(datasetId);
             if (HideCount)
             {
                 queries = queries.ToList();
