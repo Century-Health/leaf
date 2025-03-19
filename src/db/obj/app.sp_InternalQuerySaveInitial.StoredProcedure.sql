@@ -21,6 +21,7 @@ CREATE PROCEDURE [app].[sp_InternalQuerySaveInitial]
     @ver int,
     @name nvarchar(200),
     @category nvarchar(200),
+    @datasetId varchar(255),
     @conceptids app.ResourceIdTable READONLY,
     @queryids app.ResourceIdTable READONLY,
     @definition app.QueryDefinitionJson,
@@ -37,7 +38,8 @@ BEGIN
         [Name] = @name,
         Category = @category,
         UniversalId = @urn,
-        Ver = @ver
+        Ver = @ver,
+        DatasetId = @datasetId
     WHERE Id = @queryid;
 
     -- insert definition into app.QueryDefinition
