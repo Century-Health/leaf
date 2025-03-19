@@ -16,5 +16,6 @@ namespace API.DTO.Compiler
         public int? Ver { get; set; }
         public string Name { get; set; }
         public string Category { get; set; }
+        public string DatasetId { get; set; }
     }
 }
