@@ -48,10 +48,11 @@ BEGIN
         q.Updated,
         [Count] = COUNT(c.QueryId)
     FROM app.Query q
-    INNER JOIN app.Cohort c on q.Id = c.QueryId AND c.datasetId = @datasetId
+    LEFT JOIN app.Cohort c on q.Id = c.QueryId
     WHERE (q.[Owner] = @user OR q.Id IN (SELECT QueryId FROM permitted))
     AND UniversalId IS NOT NULL
     AND Nonce IS NULL
+    AND q.DatasetId = @datasetId
     GROUP BY q.Id,
         q.UniversalId,
         q.[Name],
