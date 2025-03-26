@@ -17,7 +17,8 @@ GO
 -- =======================================
 CREATE PROCEDURE [app].[sp_GetSavedBaseQueriesByConstraint]
     @user auth.[User],
-    @groups auth.GroupMembership READONLY
+    @groups auth.GroupMembership READONLY,
+    @datasetId varchar(255)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -51,6 +52,7 @@ BEGIN
     WHERE (q.[Owner] = @user OR q.Id IN (SELECT QueryId FROM permitted))
     AND UniversalId IS NOT NULL
     AND Nonce IS NULL
+    AND q.DatasetId = @datasetId
     GROUP BY q.Id,
         q.UniversalId,
         q.[Name],

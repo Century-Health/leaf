@@ -13,7 +13,7 @@ namespace Model.Search
 {
     public interface IQueryService
     {
-        Task<IEnumerable<BaseQuery>> GetQueriesAsync();
+        Task<IEnumerable<BaseQuery>> GetQueriesAsync(string datasetId);
         Task<Query> GetQueryAsync(QueryUrn uid);
         Task<QuerySaveResult> InitialSaveAsync(QuerySave query);
         Task<QuerySaveResult> UpsertSaveAsync(QuerySave query);
