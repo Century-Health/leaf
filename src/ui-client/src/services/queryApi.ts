@@ -30,9 +30,11 @@ const worker = new ExtensionConceptsWebWorker();
  * but not the logic that the queries are actually composed of (i.e., panels, Concepts, etc.)
  */
 export const getSavedQueries = async (state: AppState): Promise<SavedQueryRef[]> => {
+    const selectedPlan = document.cookie.split('selectedPlan=')[1].split(';')[0]
+    const parsedPlan = JSON.parse(selectedPlan)
     const { token } = state.session.context!;
     const http = HttpFactory.authenticated(token);
-    const resp = await http.get('api/query');
+    const resp = await http.get(`api/query/getQueries/${parsedPlan.datasetId}`);
     return resp.data as SavedQueryRef[];
 };
 
