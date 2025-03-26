@@ -22,6 +22,7 @@ CREATE PROCEDURE [app].[sp_InternalQuerySaveUpdateMove]
     @ver int,
     @name nvarchar(200),
     @category nvarchar(200),
+    @datasetId varchar(255),
     @conceptids app.ResourceIdTable READONLY,
     @queryids app.ResourceIdTable READONLY,
     @definition app.QueryDefinitionJson,
@@ -41,7 +42,7 @@ BEGIN
     WHERE Id = @oldqueryid;
 
     -- delegate to sp_InternalQuerySaveInitial
-    EXEC app.sp_InternalQuerySaveInitial @queryid, @urn, @ver, @name, @category, @conceptids, @queryids, @definition, @user;
+    EXEC app.sp_InternalQuerySaveInitial @queryid, @urn, @ver, @name, @category, @datasetId, @conceptids, @queryids, @definition, @user;
 
     UPDATE app.Query
     SET Created = (SELECT TOP 1 created FROM @created)

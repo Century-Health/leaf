@@ -21,6 +21,7 @@ CREATE PROCEDURE [app].[sp_QuerySaveInitial]
     @urn app.UniversalId,
     @name nvarchar(200),
     @category nvarchar(200),
+    @datasetId varchar(255),
     @conceptids app.ResourceIdTable READONLY,
     @queryids app.ResourceIdTable READONLY,
     @definition app.QueryDefinitionJson,
@@ -52,8 +53,17 @@ BEGIN
     BEGIN TRAN;
 
     BEGIN TRY
-
-        EXEC app.sp_InternalQuerySaveInitial @queryid, @urn, 1, @name, @category, @conceptids, @queryids, @definition, @user;
+        EXEC app.sp_InternalQuerySaveInitial 
+            @queryid, 
+            @urn, 
+            1, 
+            @name, 
+            @category, 
+            @datasetId,
+            @conceptids, 
+            @queryids, 
+            @definition, 
+            @user;
 
         COMMIT;
     END TRY

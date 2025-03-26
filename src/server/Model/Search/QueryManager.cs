@@ -156,7 +156,8 @@ namespace Model.Search
                 Name = ast.Name,
                 Category = ast.Category,
                 Definition = json(ast),
-                Resources = query.Panels.GetResources()
+                Resources = query.Panels.GetResources(),
+                DatasetId = ast.DatasetId
             };
 
             // if ast already has an assive version, use it
