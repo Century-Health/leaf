@@ -38,8 +38,8 @@ namespace API.Controllers
         }
 
         [Authorize(Policy = Access.Institutional)]
-        [HttpGet("{datasetId}")]
-        public async Task<ActionResult<IEnumerable<BaseQueryDTO>>> Get(string datasetId)
+        [HttpGet("getQueries/{datasetId}")]
+        public async Task<ActionResult<IEnumerable<BaseQueryDTO>>> GetByDatasetId(string datasetId)
         {
             try
             {

@@ -18,7 +18,7 @@ GO
 CREATE PROCEDURE [app].[sp_GetSavedBaseQueriesByConstraint]
     @user auth.[User],
     @groups auth.GroupMembership READONLY,
-    @datasetId varchar(100)
+    @datasetId varchar(255)
 AS
 BEGIN
     SET NOCOUNT ON;
