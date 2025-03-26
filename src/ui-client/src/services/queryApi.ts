@@ -56,12 +56,28 @@ export const saveQueryHomeNode = async (state: AppState, panels: PanelDTO[], pan
     const { token } = state.session.context!;
     const http = HttpFactory.authenticated(token);
     const id = state.cohort.networkCohorts.get(0)!.count.queryId;
+    
+    let datasetId;
+    try {
+        const cookieParts = document.cookie.split('selectedPlan=');
+        if (cookieParts.length > 1) {
+            const selectedPlan = cookieParts[1].split(';')[0];
+            const parsedPlan = JSON.parse(selectedPlan);
+            datasetId = parsedPlan.datasetId;
+        } else {
+            console.warn('No selectedPlan found in cookies');
+        }
+    } catch (error) {
+        console.error('Error parsing selectedPlan from cookies:', error);
+    }
+    
     return http.post(`/api/query/${id}`, {
         ...state.queries.current,
         name: state.queries.current.name.trim(),
         category: state.queries.current.category.trim(),
         panels,
-        panelFilters
+        panelFilters,
+        ...(datasetId && { datasetId })  // Only include datasetId if it exists
     });
 };
 
