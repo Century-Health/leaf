@@ -16,6 +16,7 @@ using Model.Authorization;
 using Model.Compiler;
 using Model.Search;
 using Model.Error;
+using Server.API.Utils;
 
 namespace API.Controllers
 {
@@ -100,13 +101,18 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("{datasetId}")]
+        [HttpPost("{datasetId}")]
         public async Task<ActionResult<ConceptTreeDTO>> GetTreeTopByDatasetId(
             [FromServices] ConceptTreeSearcher searcher,
-            [FromRoute] string datasetId)
+            [FromRoute] string datasetId,
+            [FromBody] UserDetails userDetails)
         {
             try
             {
+                await MixpanelLogs.TrackEventAsync("User on query page - Leaf", new {
+                    name = userDetails.userFirstName,
+                    email = userDetails.userEmail
+                });
                 // validation for datasetId
                 if (string.IsNullOrWhiteSpace(datasetId))
                 {
@@ -123,7 +129,6 @@ namespace API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-
 
         [HttpGet("{ident}")]
         public async Task<ActionResult<ConceptDTO>> Single(
@@ -223,6 +228,13 @@ namespace API.Controllers
                 log.LogError("Preflight check universal concept failed. UId:{UId} Error:{Error}", uid, e.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
+        }
+
+        // Define the UserDetails class with property names matching the client request
+        public class UserDetails
+        {
+            public string userEmail { get; set; }
+            public string userFirstName { get; set; }
         }
     }
 }
