@@ -43,7 +43,12 @@ export const fetchDemographics = (
 
     const { token } = state.session.context!;
     const http = HttpFactory.authenticated(token);
-    return http.get(`${nr.address}/api/cohort/${queryId}/demographics`);
+
+    const requestBody = {
+        userEmail: state.auth.userContext?.chUserDetails?.email,
+        userFirstName: state.auth.userContext?.chUserDetails?.firstName,
+    }
+    return http.post(`${nr.address}/api/cohort/${queryId}/demographics`, requestBody);
 };
 
 /**

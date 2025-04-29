@@ -20,6 +20,7 @@ using Model.Error;
 using API.Controllers.Base;
 using Model.Options;
 using Newtonsoft.Json;
+using Server.API.Utils;
 
 namespace API.Controllers
 {
@@ -34,14 +35,20 @@ namespace API.Controllers
             log = logger;
         }
 
-        [HttpGet("{queryid}/demographics")]
+        [HttpPost("{queryid}/demographics")]
         public async Task<ActionResult<Demographic>> Demographics(
             string queryid,
             [FromServices] DemographicProvider provider,
+            [FromBody] UserDetails userDetails,
             CancellationToken cancelToken)
         {
             try
             {
+                await MixpanelLogs.TrackEventAsync("User on Patient List page - Leaf", new {
+                    name = userDetails.userFirstName,
+                    email = userDetails.userEmail
+                });
+
                 var queryRef = new QueryRef(queryid);
                 var result = await provider.GetDemographicsAsync(queryRef, cancelToken);
                 if (result.Context.State != CompilerContextState.Ok)
@@ -214,6 +221,14 @@ namespace API.Controllers
                 log.LogError("Failed to fetch panel dataset. QueryID:{QueryID} PanelIndex:{PanelIdx} Error:{Error}", queryid, panelIdx, ex.ToString());
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
+        }
+
+
+        // Define the UserDetails class with property names matching the client request
+        public class UserDetails
+        {
+            public string userEmail { get; set; }
+            public string userFirstName { get; set; }
         }
     }
 }
