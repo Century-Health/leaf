@@ -139,7 +139,7 @@ class App extends React.Component<Props, state> {
     private handleCHLogin = () => {
         document.cookie = `setAT=; path=/; domain=century.health; secure; SameSite=Strict`;
         document.cookie = `setAT=${true}; path=/; domain=century.health; secure; SameSite=Strict`;
-        window.open('https://staging.century.health/', '_blank');
+        window.open(process.env.REACT_APP_CH_DASHBOARD_URL, '_blank');
     }
 
     public componentDidUpdate() { 
