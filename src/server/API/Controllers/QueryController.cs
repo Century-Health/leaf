@@ -38,12 +38,18 @@ namespace API.Controllers
         }
 
         [Authorize(Policy = Access.Institutional)]
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<BaseQueryDTO>>> Get()
+        [HttpGet("getQueries/{datasetId}")]
+        public async Task<ActionResult<IEnumerable<BaseQueryDTO>>> GetByDatasetId(string datasetId)
         {
             try
             {
-                var queries = await manager.GetQueriesAsync();
+                // validation for datasetId
+                if (string.IsNullOrWhiteSpace(datasetId))
+                {
+                    return BadRequest("Dataset ID cannot be empty");
+                }
+
+                var queries = await manager.GetQueriesAsync(datasetId);
                 return Ok(queries.Select(q => new BaseQueryDTO(q)));
             }
             catch (Exception e)

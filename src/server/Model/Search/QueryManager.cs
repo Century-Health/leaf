@@ -61,10 +61,10 @@ namespace Model.Search
             this.validator = validator;
         }
 
-        public async Task<IEnumerable<BaseQuery>> GetQueriesAsync()
+        public async Task<IEnumerable<BaseQuery>> GetQueriesAsync(string datasetId)
         {
             log.LogInformation("Getting queries");
-            var queries = await service.GetQueriesAsync();
+            var queries = await service.GetQueriesAsync(datasetId);
             if (HideCount)
             {
                 queries = queries.ToList();
@@ -156,7 +156,8 @@ namespace Model.Search
                 Name = ast.Name,
                 Category = ast.Category,
                 Definition = json(ast),
-                Resources = query.Panels.GetResources()
+                Resources = query.Panels.GetResources(),
+                DatasetId = ast.DatasetId
             };
 
             // if ast already has an assive version, use it

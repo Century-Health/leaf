@@ -132,6 +132,7 @@ export interface UserContext {
     token: string;
     version: string;
     chPlanDetails?: any;
+    chUserDetails?: any;
 }
 
 export interface IdTokenAndDates {

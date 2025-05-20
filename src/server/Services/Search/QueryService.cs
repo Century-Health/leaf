@@ -62,7 +62,7 @@ namespace Services.Search
             }
         }
 
-        public async Task<IEnumerable<BaseQuery>> GetQueriesAsync()
+        public async Task<IEnumerable<BaseQuery>> GetQueriesAsync(string datasetId)
         {
             using (var cn = new SqlConnection(dbOpts.ConnectionString))
             {
@@ -70,7 +70,7 @@ namespace Services.Search
 
                 var records = await cn.QueryAsync<BaseQueryRecord>(
                     queryQueries,
-                    new { user = user.UUID, groups = GroupMembership.From(user) },
+                    new { user = user.UUID, groups = GroupMembership.From(user), datasetId = datasetId },
                     commandType: CommandType.StoredProcedure,
                     commandTimeout: dbOpts.DefaultTimeout
                 );
@@ -134,6 +134,7 @@ namespace Services.Search
                         urn = urn.ToString(),
                         name = query.Name,
                         category = query.Category,
+                        datasetId = query.DatasetId,
                         conceptids = ResourceIdTable.From(conceptids),
                         queryids = ResourceIdTable.From(queryids),
                         definition = query.Definition,
@@ -169,6 +170,7 @@ namespace Services.Search
                         ver = query.Ver,
                         name = query.Name,
                         category = query.Category,
+                        datasetId = query.DatasetId,
                         conceptids = ResourceIdTable.From(conceptids),
                         queryids = ResourceIdTable.From(queryids),
                         definition = query.Definition,

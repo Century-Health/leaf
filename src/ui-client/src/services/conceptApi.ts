@@ -23,12 +23,30 @@ const makeRequest = async (state: AppState, requestString: string, requestParams
 };
 
 /*
+ * Private general function for making POST concept requests.
+ */
+const makePostRequest = async (state: AppState, requestString: string, requestBody?: object) => {
+    const { token } = state.session.context!;
+    const http = HttpFactory.authenticated(token);
+
+    const request = requestBody
+        ? http.post(requestString, requestBody)
+        : http.post(requestString)
+    return request;
+};
+
+/*
  * Fetch root concepts. Called at app login.
  */
 export const fetchRootConcepts = (state: AppState) => {
     const selectedPlan = document.cookie.split('selectedPlan=')[1].split(';')[0]
     const parsedPlan = JSON.parse(selectedPlan)
-    return makeRequest(state, `api/concept/${parsedPlan.datasetId}`);
+
+    const requestBody = {
+        userEmail: state.auth.userContext?.chUserDetails?.email,
+        userFirstName: state.auth.userContext?.chUserDetails?.firstName,
+    }
+    return makePostRequest(state, `api/concept/${parsedPlan.datasetId}`, requestBody);
 };
 
 /*

@@ -45,6 +45,7 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.29.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.18" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
+    <PackageReference Include="mixpanel-csharp" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />

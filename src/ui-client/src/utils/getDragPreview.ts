@@ -40,7 +40,7 @@ const defaultStyle = {
 };
   
 export default function createDragPreview(rawText: string) {
-    const text = rawText.length > 30 ? rawText.slice(0, 30) + '...' : rawText;
+    const text = rawText?.length > 30 ? rawText?.slice(0, 30) + '...' : rawText;
     const style = defaultStyle;
     const img = new Image();
     const shadowStyle = parseBoxShadow(style);

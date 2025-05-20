@@ -18,6 +18,7 @@ namespace Model.Compiler
         public string Category { get; set; }
         public ResourceRefs Resources { get; set; }
         public string Definition { get; set; }
+        public string DatasetId { get; set; }
     }
 
     public class QuerySaveResult : QueryRef
@@ -36,5 +37,7 @@ namespace Model.Compiler
         int? Ver { get; set; }
         string Name { get; set; }
         string Category { get; set; }
+
+        string DatasetId { get; set; }
     }
 }

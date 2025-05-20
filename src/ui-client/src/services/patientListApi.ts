@@ -305,9 +305,11 @@ const validateDefinitionColumns = (
  * Extracts a demographics dataset definition.
  */
 const getDemographicsDefinition = (identified: boolean) => {
-    const columns = identified
+    let columns = identified
         ? [ ...DemographicsDefTemplate.columns.values() ].map((c) => c.id)
         : [ ...DemographicsDefTemplate.columns.values() ].filter((c) => !c.optional).map((c) => c.id)
+
+    columns = columns.filter((c) => c === 'personId');
     const dsName = 'demographics';
     const dsDisplayName = 'Basic Demographics';
     const def: PatientListDatasetDefinition = {
