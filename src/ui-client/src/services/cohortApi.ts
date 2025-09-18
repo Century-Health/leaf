@@ -142,14 +142,10 @@ export const fetchAvailableDatasets = async (state: AppState): Promise<PatientLi
     let chDatasetId = null;
     try {
         const cookieParts = document.cookie.split('selectedPlan=');
-        console.log('DEBUG: Cookie parts:', cookieParts);
         if (cookieParts.length > 1) {
             const selectedPlan = cookieParts[1].split(';')[0];
-            console.log('DEBUG: Selected plan raw:', selectedPlan);
             const parsedPlan = JSON.parse(selectedPlan);
-            console.log('DEBUG: Parsed plan object:', parsedPlan);
             chDatasetId = parsedPlan.chDatasetId || parsedPlan.datasetId; // fallback to datasetId if chDatasetId not available
-            console.log('DEBUG: Final chDatasetId extracted:', chDatasetId);
         } else {
             console.log('DEBUG: No selectedPlan cookie found');
         }
@@ -159,14 +155,8 @@ export const fetchAvailableDatasets = async (state: AppState): Promise<PatientLi
     
     // Build query parameters
     const params = chDatasetId ? { chDatasetId } : {};
-    console.log('DEBUG: Making API call with params:', params);
     const resp = await http.get(`/api/dataset`, { params });
     const ds = resp.data as PatientListDatasetQueryDTO[];
-    console.log('DEBUG: API returned', ds.length, 'datasets');
-    if (ds.length > 0) {
-        console.log('DEBUG: First dataset chDatasetId:', ds[0].chDatasetId);
-        console.log('DEBUG: All dataset chDatasetIds:', ds.map(d => ({ name: d.name, chDatasetId: d.chDatasetId })));
-    }
     return ds;
 };
 
