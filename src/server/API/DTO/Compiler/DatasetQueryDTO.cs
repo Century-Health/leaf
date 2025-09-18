@@ -20,6 +20,7 @@ namespace API.DTO.Compiler
         public string Category { get; set; }
         public string Description { get; set; }
         public ICollection<string> Tags { get; set; }
+        public string ChDatasetId { get; set; }
 
         public DatasetQueryDTO(IDatasetQuery dq)
         {
@@ -32,6 +33,7 @@ namespace API.DTO.Compiler
             Category = dq.Category;
             Description = dq.Description;
             Tags = dq.Tags;
+            ChDatasetId = dq.ChDatasetId;
         }
     }
 }

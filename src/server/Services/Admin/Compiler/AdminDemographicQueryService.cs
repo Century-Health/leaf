@@ -34,7 +34,7 @@ namespace Services.Admin.Compiler
             this.user = userContext;
         }
 
-        public async Task<AdminDemographicQuery> GetDemographicQueryAsync()
+        public async Task<AdminDemographicQuery> GetDemographicQueryAsync(string chDatasetId = null)
         {
             using (var cn = new SqlConnection(opts.ConnectionString))
             {
@@ -42,6 +42,7 @@ namespace Services.Admin.Compiler
 
                 var demo = await cn.QueryFirstOrDefaultAsync<AdminDemographicQueryRecord>(
                     Sql.Get,
+                    new { chDatasetId = chDatasetId },
                     commandType: CommandType.StoredProcedure,
                     commandTimeout: opts.DefaultTimeout);
 

@@ -13,6 +13,6 @@ namespace Model.Search
 {
     public interface IDatasetQueryFetcher
     {
-        Task<IEnumerable<IDatasetQuery>> GetDatasetQueriesAsync();
+        Task<IEnumerable<IDatasetQuery>> GetDatasetQueriesAsync(string chDatasetId = null);
     }
 }

@@ -23,6 +23,7 @@ namespace Model.Compiler
         string SqlStatement { get; set; }
         bool IsDefault { get; set; }
         ICollection<string> Tags { get; set; }
+        string ChDatasetId { get; set; }
     }
 
     public class DatasetQueryRef
@@ -70,6 +71,7 @@ namespace Model.Compiler
         public bool IsDefault { get; set; }
         public string SqlStatement { get; set; }
         public ICollection<string> Tags { get; set; }
+        public string ChDatasetId { get; set; }
 
         public DatasetQuery()
         {

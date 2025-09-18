@@ -70,14 +70,14 @@ namespace Model.Cohort
         /// <exception cref="LeafCompilerException"/>
         /// <exception cref="ArgumentNullException"/>
         /// <exception cref="System.Data.Common.DbException"/>
-        public async Task<Result> GetDemographicsAsync(QueryRef query, CancellationToken token)
+        public async Task<Result> GetDemographicsAsync(QueryRef query, CancellationToken token, string chDatasetId = null)
         {
             log.LogInformation("Demographics starting. QueryRef:{QueryRef}", query);
             Ensure.NotNull(query, nameof(query));
             ThrowIfSettingsInvalid();
             var result = new Result();
 
-            var validationContext = await contextProvider.GetCompilerContextAsync(query);
+            var validationContext = await contextProvider.GetCompilerContextAsync(query, chDatasetId);
             log.LogInformation("Demographics compiler validation context. Context:{@Context}", validationContext);
 
             result.Context = validationContext;

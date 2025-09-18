@@ -50,7 +50,7 @@ namespace API.Controllers
                 });
 
                 var queryRef = new QueryRef(queryid);
-                var result = await provider.GetDemographicsAsync(queryRef, cancelToken);
+                var result = await provider.GetDemographicsAsync(queryRef, cancelToken, userDetails.chDatasetId);
                 if (result.Context.State != CompilerContextState.Ok)
                 {
                     return NotFound(new CompilerErrorDTO(result.Context.State));
@@ -229,6 +229,7 @@ namespace API.Controllers
         {
             public string userEmail { get; set; }
             public string userFirstName { get; set; }
+            public string chDatasetId { get; set; }
         }
     }
 }

@@ -31,15 +31,17 @@ namespace Services.Search
             opts = dbOptions.Value;
         }
 
-        public async Task<IEnumerable<IDatasetQuery>> GetDatasetQueriesAsync()
+        public async Task<IEnumerable<IDatasetQuery>> GetDatasetQueriesAsync(string chDatasetId = null)
         {
             using (var cn = new SqlConnection(opts.ConnectionString))
             {
                 await cn.OpenAsync();
 
+                var parameters = new { user = user.UUID, groups = GroupMembership.From(user), admin = user.IsAdmin, chDatasetId = chDatasetId };
+                
                 var grid = await cn.QueryMultipleAsync(
                     CRUDQuery.getDatasetQueries,
-                    new { user = user.UUID, groups = GroupMembership.From(user), admin = user.IsAdmin },
+                    parameters,
                     commandType: CommandType.StoredProcedure,
                     commandTimeout: opts.DefaultTimeout
                 );
