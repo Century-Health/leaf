@@ -100,6 +100,7 @@ export interface PatientListDatasetQueryDTO {
     tags: string[];
     universalId?: string;
     isDefault?: boolean;
+    chDatasetId?: string;
 }
 
 export interface PatientListDatasetQuery extends PatientListDatasetQueryDTO {

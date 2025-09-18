@@ -17,7 +17,7 @@ using Services.Tables;
 
 namespace Services.Search
 {
-    using Hydrator = Func<QueryRef, Task<DemographicCompilerContext>>;
+    using Hydrator = Func<QueryRef, string, Task<DemographicCompilerContext>>;
 
     public class DemographicCompilerContextProvider : DemographicCompilerValidationContextProvider.ICompilerContextProvider
     {
@@ -38,10 +38,10 @@ namespace Services.Search
             log = logger;
         }
 
-        public async Task<DemographicCompilerContext> GetCompilerContextAsync(QueryRef queryRef)
+        public async Task<DemographicCompilerContext> GetCompilerContextAsync(QueryRef queryRef, string chDatasetId = null)
         {
             var hydrator = GetContextHydrator(queryRef);
-            var context = await hydrator(queryRef);
+            var context = await hydrator(queryRef, chDatasetId);
             return context;
         }
 
@@ -66,7 +66,7 @@ namespace Services.Search
             };
         }
 
-        async Task<DemographicCompilerContext> ByQueryId(QueryRef queryRef)
+        async Task<DemographicCompilerContext> ByQueryId(QueryRef queryRef, string chDatasetId)
         {
             log.LogInformation("Getting DemographicQueryCompilerContext by QueryId");
             var queryid = queryRef.Id.Value;
@@ -76,7 +76,7 @@ namespace Services.Search
 
                 var grid = await cn.QueryMultipleAsync(
                     contextById,
-                    new { queryid, user = user.UUID, groups = GroupMembership.From(user), admin = user.IsAdmin },
+                    new { queryid, user = user.UUID, groups = GroupMembership.From(user), admin = user.IsAdmin, chDatasetId = chDatasetId },
                     commandType: CommandType.StoredProcedure,
                     commandTimeout: opts.DefaultTimeout
                 );
@@ -85,7 +85,7 @@ namespace Services.Search
             }
         }
 
-        async Task<DemographicCompilerContext> ByQueryUId(QueryRef queryRef)
+        async Task<DemographicCompilerContext> ByQueryUId(QueryRef queryRef, string chDatasetId)
         {
             log.LogInformation("Getting DemographicQueryCompilerContext by QueryUId");
             var queryuid = queryRef.UniversalId.ToString();
@@ -95,7 +95,7 @@ namespace Services.Search
 
                 var grid = await cn.QueryMultipleAsync(
                     contextByUId,
-                    new { queryuid, user = user.UUID, groups = GroupMembership.From(user), admin = user.IsAdmin },
+                    new { queryuid, user = user.UUID, groups = GroupMembership.From(user), admin = user.IsAdmin, chDatasetId = chDatasetId },
                     commandType: CommandType.StoredProcedure,
                     commandTimeout: opts.DefaultTimeout
                 );

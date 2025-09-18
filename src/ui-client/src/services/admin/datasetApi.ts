@@ -62,7 +62,23 @@ export const deleteDataset = async (state: AppState, dataset: AdminDatasetQuery)
 export const getAdminDemographicsDataset = async (state: AppState): Promise<AdminDemographicQuery> => {
     const { token } = state.session.context!;
     const http = HttpFactory.authenticated(token);
-    const resp = await http.get(`api/admin/demographics`);
+    
+    // Extract chDatasetId from selectedPlan cookie
+    let chDatasetId = null;
+    try {
+        const cookieParts = document.cookie.split('selectedPlan=');
+        if (cookieParts.length > 1) {
+            const selectedPlan = cookieParts[1].split(';')[0];
+            const parsedPlan = JSON.parse(selectedPlan);
+            chDatasetId = parsedPlan.chDatasetId || parsedPlan.datasetId; // fallback to datasetId if chDatasetId not available
+        }
+    } catch (error) {
+        console.error('Error parsing selectedPlan from cookies:', error);
+    }
+    
+    // Build query parameters and make API call
+    const params = chDatasetId ? { chDatasetId } : {};
+    const resp = await http.get(`api/admin/demographics`, { params });
     const ds = resp.data as AdminDemographicQueryDTO;
     const converted: AdminDemographicQuery = {
         id: 'demographics',

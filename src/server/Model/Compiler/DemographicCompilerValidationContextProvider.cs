@@ -17,7 +17,7 @@ namespace Model.Compiler
     {
         public interface ICompilerContextProvider
         {
-            Task<DemographicCompilerContext> GetCompilerContextAsync(QueryRef queryRef);
+            Task<DemographicCompilerContext> GetCompilerContextAsync(QueryRef queryRef, string chDatasetId = null);
         }
 
         readonly ICompilerContextProvider contextProvider;
@@ -38,12 +38,12 @@ namespace Model.Compiler
         /// <param name="qr">Query reference.</param>
         /// <exception cref="Validation.LeafRPCException"/>
         /// <exception cref="System.Data.Common.DbException"/>
-        public async Task<CompilerValidationContext<DemographicCompilerContext>> GetCompilerContextAsync(QueryRef qr)
+        public async Task<CompilerValidationContext<DemographicCompilerContext>> GetCompilerContextAsync(QueryRef qr, string chDatasetId = null)
         {
             log.LogInformation("Getting DemographicQueryCompilerContext. QueryRef:{@QueryRef}", qr);
             try
             {
-                var context = await contextProvider.GetCompilerContextAsync(qr);
+                var context = await contextProvider.GetCompilerContextAsync(qr, chDatasetId);
                 var state = GetContextState(context);
                 return new CompilerValidationContext<DemographicCompilerContext>
                 {

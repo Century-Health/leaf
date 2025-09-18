@@ -32,11 +32,11 @@ namespace API.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<ActionResult<AdminDemographicQuery>> Get()
+        public async Task<ActionResult<AdminDemographicQuery>> Get([FromQuery] string chDatasetId)
         {
             try
             {
-                var query = await manager.GetDemographicQueryAsync();
+                var query = await manager.GetDemographicQueryAsync(chDatasetId);
                 if (query == null)
                 {
                     query = new AdminDemographicQuery();
