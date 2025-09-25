@@ -17,6 +17,7 @@ GO
 -- Description: Fetch the app.DemographicQuery record for an admin.
 -- =======================================
 CREATE PROCEDURE [adm].[sp_GetDemographicQuery]
+    @chDatasetId varchar(255) = NULL
 AS
 BEGIN
     SET NOCOUNT ON
@@ -26,6 +27,7 @@ BEGIN
         ColumnNamesJson,
         LastChanged,
         ChangedBy
-    FROM app.DemographicQuery;
+    FROM app.DemographicQuery
+    WHERE chDatasetId = @chDatasetId;
 END
 GO

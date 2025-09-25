@@ -44,9 +44,23 @@ export const fetchDemographics = (
     const { token } = state.session.context!;
     const http = HttpFactory.authenticated(token);
 
+    // Extract chDatasetId from selectedPlan cookie
+    let chDatasetId = null;
+    try {
+        const cookieParts = document.cookie.split('selectedPlan=');
+        if (cookieParts.length > 1) {
+            const selectedPlan = cookieParts[1].split(';')[0];
+            const parsedPlan = JSON.parse(selectedPlan);
+            chDatasetId = parsedPlan.chDatasetId || parsedPlan.datasetId; // fallback to datasetId if chDatasetId not available
+        }
+    } catch (error) {
+        console.error('Error parsing selectedPlan from cookies:', error);
+    }
+
     const requestBody = {
         userEmail: state.auth.userContext?.chUserDetails?.email,
         userFirstName: state.auth.userContext?.chUserDetails?.firstName,
+        chDatasetId: chDatasetId
     }
     return http.post(`${nr.address}/api/cohort/${queryId}/demographics`, requestBody);
 };
@@ -123,7 +137,25 @@ export const fetchDataset = async (
 export const fetchAvailableDatasets = async (state: AppState): Promise<PatientListDatasetQueryDTO[]> => {
     const { token } = state.session.context!;
     const http = HttpFactory.authenticated(token);
-    const resp = await http.get(`/api/dataset`);
+    
+    // Extract chDatasetId from selectedPlan cookie
+    let chDatasetId = null;
+    try {
+        const cookieParts = document.cookie.split('selectedPlan=');
+        if (cookieParts.length > 1) {
+            const selectedPlan = cookieParts[1].split(';')[0];
+            const parsedPlan = JSON.parse(selectedPlan);
+            chDatasetId = parsedPlan.chDatasetId || parsedPlan.datasetId; // fallback to datasetId if chDatasetId not available
+        } else {
+            console.log('DEBUG: No selectedPlan cookie found');
+        }
+    } catch (error) {
+        console.error('Error parsing selectedPlan from cookies:', error);
+    }
+    
+    // Build query parameters
+    const params = chDatasetId ? { chDatasetId } : {};
+    const resp = await http.get(`/api/dataset`, { params });
     const ds = resp.data as PatientListDatasetQueryDTO[];
     return ds;
 };

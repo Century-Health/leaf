@@ -19,7 +19,8 @@ GO
 CREATE PROCEDURE [app].[sp_GetDatasetQueries]
     @user auth.[User],
     @groups auth.GroupMembership READONLY,
-    @admin bit = 0
+    @admin bit = 0,
+    @chDatasetId varchar(255) = NULL
 AS
 BEGIN
     SET NOCOUNT ON
@@ -30,19 +31,21 @@ BEGIN
 
     IF (@admin = 1)
     BEGIN;
-        -- user is an admin, load them all
+        -- user is an admin, load them all (with chDatasetId filter if provided)
         INSERT INTO @ids
         SELECT dq.Id
         FROM app.DatasetQuery dq
+        WHERE (@chDatasetId IS NULL OR dq.chDatasetId = @chDatasetId)
     END;
     ELSE
     BEGIN;
-        -- user is not an admin, assess their privilege
+        -- user is not an admin, assess their privilege (with chDatasetId filter if provided)
         INSERT INTO @ids (Id)
         SELECT
             dq.Id
         FROM app.DatasetQuery dq
-        WHERE EXISTS (
+        WHERE (@chDatasetId IS NULL OR dq.chDatasetId = @chDatasetId)
+        AND (EXISTS (
             SELECT 1
             FROM auth.DatasetQueryConstraint
             WHERE DatasetQueryId = dq.Id AND
@@ -60,7 +63,7 @@ BEGIN
             SELECT 1
             FROM auth.DatasetQueryConstraint
             WHERE DatasetQueryId = dq.Id
-        );
+        ));
     END;
 
     -- produce the hydrated records
@@ -78,7 +81,8 @@ BEGIN
         ddq.[Schema],
         ddq.SqlFieldDate,
         ddq.SqlFieldValueString,
-        ddq.SqlFieldValueNumeric
+        ddq.SqlFieldValueNumeric,
+        dq.chDatasetId
     FROM @ids i
     JOIN app.DatasetQuery dq ON i.Id = dq.Id
 	LEFT JOIN app.DynamicDatasetQuery ddq ON dq.Id = ddq.Id

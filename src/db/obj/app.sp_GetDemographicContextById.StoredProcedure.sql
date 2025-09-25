@@ -20,7 +20,8 @@ CREATE PROCEDURE [app].[sp_GetDemographicContextById]
     @queryid UNIQUEIDENTIFIER,
     @user auth.[User],
     @groups auth.GroupMembership READONLY,
-    @admin bit = 0
+    @admin bit = 0,
+    @chDatasetId varchar(255) = NULL
 AS
 BEGIN
     SET NOCOUNT ON
@@ -44,5 +45,6 @@ BEGIN
         SqlStatement,
         ColumnNamesJson
     FROM app.DemographicQuery
+    WHERE (@chDatasetId IS NULL OR chDatasetId = @chDatasetId)
 END
 GO

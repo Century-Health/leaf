@@ -22,6 +22,7 @@ namespace Services.Search
         public string Category { get; set; }
         public string Description { get; set; }
         public string SqlStatement { get; set; }
+        public string ChDatasetId { get; set; }
     }
 
     class DatasetQueryRecord : BaseDatasetQueryRecord
@@ -38,7 +39,8 @@ namespace Services.Search
                 Name = Name,
                 Category = Category,
                 Description = Description,
-                SqlStatement = SqlStatement
+                SqlStatement = SqlStatement,
+                ChDatasetId = ChDatasetId
             };
         }
     }
@@ -86,7 +88,8 @@ namespace Services.Search
                 SqlFieldValueNumeric = SqlFieldValueNumeric,
                 IsEncounterBased = IsEncounterBased,
                 IsDefault = IsDefault,
-                Schema = DynamicDatasetSchemaFieldSerde.Deserialize(Schema)
+                Schema = DynamicDatasetSchemaFieldSerde.Deserialize(Schema),
+                ChDatasetId = ChDatasetId
             };
         }
     }

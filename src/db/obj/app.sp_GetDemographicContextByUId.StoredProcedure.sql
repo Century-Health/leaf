@@ -20,7 +20,8 @@ CREATE PROCEDURE [app].[sp_GetDemographicContextByUId]
     @queryuid app.UniversalId,
     @user auth.[User],
     @groups auth.GroupMembership READONLY,
-    @admin bit = 0
+    @admin bit = 0,
+    @chDatasetId varchar(255) = NULL
 AS
 BEGIN
     SET NOCOUNT ON
@@ -31,7 +32,7 @@ BEGIN
     FROM app.Query
     WHERE app.Query.UniversalId = @queryuid;
 
-    EXEC app.sp_GetDemographicContextById @qid, @user, @groups, @admin = @admin;
+    EXEC app.sp_GetDemographicContextById @qid, @user, @groups, @admin = @admin, @chDatasetId = @chDatasetId;
 END
 
 

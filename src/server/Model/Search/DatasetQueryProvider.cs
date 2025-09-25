@@ -34,12 +34,13 @@ namespace Model.Search
         /// <summary>
         /// Gets all dataset queries that the user is permitted to use.
         /// </summary>
+        /// <param name="chDatasetId">Optional chDatasetId to filter datasets</param>
         /// <returns>The queries.</returns>
         /// <exception cref="System.Data.Common.DbException"/>
-        public async Task<IEnumerable<IDatasetQuery>> GetQueriesAsync()
+        public async Task<IEnumerable<IDatasetQuery>> GetQueriesAsync(string chDatasetId = null)
         {
-            log.LogInformation("Getting dataset queries.");
-            return await fetcher.GetDatasetQueriesAsync();
+            log.LogInformation("Getting dataset queries. ChDatasetId:{ChDatasetId}", chDatasetId);
+            return await fetcher.GetDatasetQueriesAsync(chDatasetId);
         }
     }
 }

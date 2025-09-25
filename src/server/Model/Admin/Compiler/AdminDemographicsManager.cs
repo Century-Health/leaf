@@ -15,11 +15,11 @@ namespace Model.Admin.Compiler
 {
     public class AdminDemographicsManager
     {
-        public interface IAdminDemographicQueryService
-        {
-            Task<AdminDemographicQuery> GetDemographicQueryAsync();
-            Task<AdminDemographicQuery> UpdateDemographicQueryAsync(AdminDemographicQuery query);
-        }
+    public interface IAdminDemographicQueryService
+    {
+        Task<AdminDemographicQuery> GetDemographicQueryAsync(string chDatasetId = null);
+        Task<AdminDemographicQuery> UpdateDemographicQueryAsync(AdminDemographicQuery query);
+    }
 
         readonly IAdminDemographicQueryService svc;
         readonly ILogger<AdminDemographicsManager> log;
@@ -32,10 +32,10 @@ namespace Model.Admin.Compiler
             this.log = log;
         }
 
-        public async Task<AdminDemographicQuery> GetDemographicQueryAsync()
+        public async Task<AdminDemographicQuery> GetDemographicQueryAsync(string chDatasetId = null)
         {
-            log.LogInformation("Getting DemographicsQuery.");
-            return await svc.GetDemographicQueryAsync();
+            log.LogInformation("Getting DemographicsQuery. ChDatasetId:{ChDatasetId}", chDatasetId);
+            return await svc.GetDemographicQueryAsync(chDatasetId);
         }
 
         public async Task<AdminDemographicQuery> UpdateDemographicQueryAsync(AdminDemographicQuery query)
